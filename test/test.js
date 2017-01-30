@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 import assert from 'assert';
 import { exec } from 'mz/child_process';
-import { exists, readFile, writeFile, mkdtemp, mkdir } from 'mz/fs';
+import { exists, readFile, writeFile, mkdtemp, mkdir, rename } from 'mz/fs';
 import { join, sep, normalize } from 'path';
 
 
@@ -350,10 +350,10 @@ console.log(x);
       await initGitRepo();
       let cliResult;
       try {
-        await exec('mv ../../../.eslintrc ../../../.eslintrc.backup');
+        await rename(join(__dirname, '../../.eslintrc'), join(__dirname, '../../.eslintrc.backup'));
         cliResult = await runCli('convert');
       } finally {
-        await exec('mv ../../../.eslintrc.backup ../../../.eslintrc');
+        await rename(join(__dirname, '../../.eslintrc.backup'), join(__dirname, '../../.eslintrc'));
       }
       assert.equal(cliResult.stderr, '');
       assertIncludes(cliResult.stdout, 'because there was no eslint config file');
