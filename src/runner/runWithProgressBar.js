@@ -23,8 +23,8 @@ export default async function runWithProgressBar(
     }
     numProcessed++;
     let errorString = numFailures === 0 ? '' : ` (${pluralize(numFailures, 'failure')} so far)`;
-    process.stdout.write(`\r${numProcessed}/${numTotal}${errorString}`);
+    console.log(`${numProcessed}/${numTotal}${errorString}`);
   });
-  process.stdout.write('\n');
+  console.log('');
   return results;
 }

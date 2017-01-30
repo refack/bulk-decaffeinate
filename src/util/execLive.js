@@ -7,12 +7,12 @@ import { spawn } from 'child_process';
  */
 export default function execLive(command) {
   return new Promise((resolve, reject) => {
-    let childProcess = spawn('/bin/sh', ['-c', command], {stdio: 'inherit'});
+    let childProcess = spawn(command, {stdio: 'inherit', shell: true});
     childProcess.on('close', code => {
       if (code === 0) {
         resolve();
       } else {
-        reject();
+        reject(new Error(`${command} returned statuscode ${code}`));
       }
     });
   });

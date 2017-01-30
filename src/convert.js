@@ -51,8 +51,7 @@ Re-run with the "check" command for more details.`);
   console.log(`Generating the first commit: "${renameCommitMsg}"...`);
   await makeCommit(async function (repo, resolvePath) {
     let files = baseFiles.map(p => resolvePath(`${p}.js`));
-    let p = new Promise((res, rej) => repo.add(files, err => err ? rej(err) : res(files)));
-    return await p;
+    return await files;
   }, renameCommitMsg, 'decaffeinate');
 
   await runAsync(
@@ -78,8 +77,7 @@ Re-run with the "check" command for more details.`);
   console.log(`Generating the second commit: ${decaffeinateCommitMsg}...`);
   await makeCommit(async function (repo, resolvePath) {
     let files = baseFiles.map(p => resolvePath(`${p}.js`));
-    let p = new Promise((res, rej) => repo.add(files, err => err ? rej(err) : res(files)));
-    return await p;
+    return await files;
   }, decaffeinateCommitMsg, 'decaffeinate');
 
   let jsFiles = baseFiles.map(f => `${f}.js`);
@@ -134,10 +132,9 @@ Re-run with the "check" command for more details.`);
     // Add unchanged files and also make sure any baseFiles are added. Otherwise
     // we can sometimes run into a weird race condition where the last files to
     // go through eslint --fix don't get added.
-    let changedFiles = (await gitTrackedStatus()).map(f => f.path);
+    let changedFiles = (await repo.status() || {files:[]}).files.map(f => f.path);
     let files = changedFiles.concat(baseFiles.map(p => resolvePath(`${p}.js`)));
-    let p = new Promise((res, rej) => repo.add(files, err => err ? rej(err) : res(files)));
-    return await p;
+    return await files;
   }, postProcessCommitMsg, 'decaffeinate');
 
   console.log(`Successfully ran decaffeinate on ${pluralize(baseFiles.length, 'file')}.`);
